@@ -2,46 +2,62 @@
 
 class calc
 {
-    protected $num1 = "";
-    protected $num2 = "";
-    private $result = "";
     private $history = array();
 
-    public function __construct($num1, $num2)
+    public function __construct()
     {
-        $this->num1 = $num1;
-        $this->num2 = $num2;
+        $this->history = array();
     }
 
-    public function add()
+    public function add($num1, $num2)
     {
-        $this->result = $this->num1 + $this->num2;
-        //$this->history += "added num1 to num2 got result = $this->result";
-        return $this->result;
+        $result = $num1 + $num2;
+        $this->history[] = "added num1 to num2 got result = $result";
+
+        return $result;
     }
 
-    public function multiply()
+    public function multiply($num1, $num2)
     {
-        $this->result = $this->num1 + $this->num2;
-        //$this->history += "multiplied num1 with num2 got result = $this->result";
-        return $this->result;
+        $result = $num1 * $num2;
+        $history[] = "multiplied num1 with num2 got result = $result";
+
+        return $result;
     }
 
-    public function subtract()
+    public function subtract($num1, $num2)
     {
-        $this->result = $this->num1 - $this->num2;
-        //$this->history += "subtracted num1 from num2 got result = $this->result";
-        return $this->result;
+        $result = $num1 - $num2;
+        $history[] = "subtracted num1 from num2 got result =$result";
+
+        return $result;
     }
 
-    public function divide()
+    public function divide($num1, $num2)
     {
-        if ($this->num2 == 0) {
+        if ($num2 == 0) {
+
             return "nie można dzielić przez zero";
         } else {
-            //$this->history += "divided num1 by num2 got result = $this->result";
-            $this->result = $this->num1 / $this->num2;
-            return $this->result;
+            $result = $num1 / $num2;
+            $history[] = "divided num1 by num2 got result = $result";
+        }
+
+        return $result;
+    }
+
+
+    public function printOperations()
+    {
+        foreach ($this->history as $history) {
+            echo $history . "<br>";
+        }
+    }
+
+    public function clearOperations()
+    {
+        foreach ($this->history as $history) {
+            $history[] = "";
         }
     }
 }
@@ -50,17 +66,21 @@ class AdvancedCalculator extends calc
 {
     private $pow_result = 1;
 
-    public function pow()
+    static public $pi = 3.14;
+
+    public function pow($num1, $num2)
     {
-        //$this->pow_result = 1;
-        for ($i = 1; $i <= $this->num2; $i++) {
-            $this->pow_result = $this->pow_result * $this->num1;
+        for ($i = 1; $i <= $num2; $i++) {
+            $this->pow_result = $this->pow_result * $num1;
         }
         return $this->pow_result;
     }
-    
+
 }
 
+var_dump(AdvancedCalculator::$pi);
+
+$calc_object = new AdvancedCalculator();
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
@@ -70,23 +90,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $result = "";
 
 
-    $calc_object = new AdvancedCalculator($num1, $num2);
-
     switch ($char) {
         case "+":
-            $result = $calc_object->add();
+            $result = $calc_object->add($num1, $num2);
             break;
         case "*":
-            $result = $calc_object->multiply();
+            $result = $calc_object->multiply($num1, $num2);
             break;
         case "-":
-            $result = $calc_object->subtract();
+            $result = $calc_object->subtract($num1, $num2);
             break;
         case "/":
-            $result = $calc_object->divide();
+            $result = $calc_object->divide($num1, $num2);
             break;
         case "^":
-            $result = $calc_object->pow();
+            $result = $calc_object->pow($num1, $num2);
             break;
     }
 }
@@ -113,6 +131,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         </select>
         <input type="number" name="second" id="second"><br><br>
         <input type="submit" value="oblicz"><br><br>
+        <input type="submit" value="pokaz" name="print" id="print">
+        <input type="submit" value="wyczysc" name="clear" id="clear"><br><br>
 
     </form>
     <div>
@@ -121,6 +141,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             echo "Wynik: " . $result;
             unset($result);
         }
+        ?>
+    </div>
+    <div class="history">
+        <!--//TODO Jak wywołać tu te funkcje do historii???-->
+        <?php
+        //if(isset($_POST['print'])) {
+        $calc_object->printOperations();
+        // }
         ?>
     </div>
 </div>
